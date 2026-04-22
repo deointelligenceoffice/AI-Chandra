@@ -11,14 +11,14 @@ st.logo("https://your-logo-url.com/logo.png", link="https://deotechnologies.com"
 with st.sidebar:
     st.markdown("---")
     st.markdown("### 🏢 Parent Company")
-    st.info("Chandra.ai is a flagship product of *Deo Technologies*.")
+    st.info("AI.Chandra is a flagship product of *Deo Technologies*.")
     st.caption("© 2026 Deo Technologies. All rights reserved.")
 
 
 # --- CONFIGURATION & BRANDING ---
 LOGO_URL = "https://www.gstatic.com/lamda/images/gemini_sparkle_v002.svg" 
-VERSION = "v1.1.0-PRO"
-COMPANY_NAME = "Chandra.ai"
+VERSION = "v1.0.0-PRO"
+COMPANY_NAME = "Ai.Chandra"
 FOUNDER = "RISHAV RAJ"
 
 # 1. Page Config
@@ -132,9 +132,10 @@ else:
 
     # TASK LOGIC (Doubt Solver added here)
     if choice == "🎓 Exam Master":
-        c1, c2 = st.columns(2)
-        with c1: exam = st.selectbox("Exam", ["IIT-JEE", "NEET", "NDA", "UPSC"])
-        with c2: type_ = st.selectbox("Task", ["Doubt Solver", "PYQ Solution", "Concept Breakdown", "Mock Question"])
+        c1, c2 ,c3 = st.columns(3)
+        with c1: exam = st.selectbox("Exam", ["IIT-JEE", "NEET", "NDA", "UPSC", "10TH BOARDS", "12TH BOARDS"])
+        with c1: subject = st.selectbox("Exam", ["PHYSICS", "CHEMISTRY", "MATHS", "BIOLOGY" , "REASONING", "CURRENT AFFAIRS", "HISTORY", "GEOGRAPHY" , "CIVICS", "INDIAN POLITY", "INDIAN ECONOMY", "COMPUTER APPLICATIONS"])
+        with c3: type_ = st.selectbox("Task", ["Doubt Solver", "PYQ Solution", "Concept Breakdown", "Mock Question"])
         module_context = f"[Target: {exam}, Mode: {type_}] "
 
     elif choice == "🎤 Pitch Maker":
@@ -150,7 +151,7 @@ else:
 
     uploaded_file = st.file_uploader("Attach Intel (Images)", type=["jpg", "png", "jpeg"], label_visibility="collapsed")
 
-    if prompt := st.chat_input("Command Chandra..."):
+    if prompt := st.chat_input("Type your query..."):
         st.session_state.chat_history.append({"role": "user", "content": prompt})
         with st.chat_message("user"):
             st.markdown(prompt)
