@@ -15,14 +15,14 @@ st.logo("https://i.postimg.cc/q7Rv7FrJ/7da31486-00a2-4f76-a7b0-9ce3acc1933b.jpg"
 with st.sidebar:
     st.markdown("---")
     st.markdown("### 🏢 Parent Company")
-    st.info("AI.Chandra is a flagship product of *Deo Technologies*.")
+    st.info("AI Chandra is a flagship product of *Deo Technologies*.")
     st.caption("© 2026 Deo Technologies. All rights reserved.")
 
 
 # --- CONFIGURATION & BRANDING ---
 LOGO_URL = "https://www.gstatic.com/lamda/images/gemini_sparkle_v002.svg" 
 VERSION = "v1.0.0-PRO"
-COMPANY_NAME = "Ai.Chandra"
+COMPANY_NAME = "Ai Chandra"
 FOUNDER = "RISHAV RAJ"
 
 # 1. Page Config
