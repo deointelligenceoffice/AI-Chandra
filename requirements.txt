@@ -1,4 +1,5 @@
-streamlit>=1.43.0
-google-generativeai
-Authlib
-Pillow
+streamlit>=1.57.0
+google-genai>=0.1.0
+pillow
+authlib>=1.3.2
+httpx
