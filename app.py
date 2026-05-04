@@ -65,14 +65,12 @@ if not api_key:
     st.error("System Failure: API Key missing.")
     st.stop()
 
-# Updated Model Call for Chat
-def get_chandra_response(prompt, image=None):
-    model_id = "gemini-3.1-flash-lite-preview"
-    if image:
-        response = client.models.generate_content(model=model_id, contents=[prompt, image])
-    else:
-        response = client.models.generate_content(model=model_id, contents=prompt)
-    return response.text
+# Change your model line to this:
+model = genai.GenerativeModel(
+    model_name="gemini-3.1-flash-lite-preview", 
+    system_instruction=CHANDRA_IDENTITY
+)
+
     
 # --- 5. SIDEBAR WORKSPACE ---
 with st.sidebar:
