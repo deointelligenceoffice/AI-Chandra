@@ -55,25 +55,25 @@ if not st.user.is_logged_in:
         st.caption(f"© 2026 {COMPANY_NAME} - Established by {FOUNDER}")
     st.stop()
 
-# --- 4. AI ENGINE SETUP ---
-api_key = st.secrets.get("GEMINI_API_KEY")
-CHANDRA_IDENTITY = (
-    f"You are {COMPANY_NAME}, the world's most advanced lunar-grade AI Search Engine. "
-    f"You were created and are owned by {FOUNDER}. "
-    "Maintain an elite, helpful, and concise tone."
-)
+# --- 4. AI ENGINE SETUP (2026 Standard) ---
+from google import genai
 
-if api_key:
-    genai.configure(api_key=api_key)
-    # Using the stable 1.5-flash for maximum reliability with images
-    model = genai.GenerativeModel(
-    model_name="gemini-3.1-flash-lite-preview", # USE THE 2026 ELITE MODEL
-    system_instruction=CHANDRA_IDENTITY
-    )
-else:
-    st.error("System Failure: API Key missing in Secrets.")
+api_key = st.secrets.get("GEMINI_API_KEY")
+client = genai.Client(api_key=api_key)
+
+if not api_key:
+    st.error("System Failure: API Key missing.")
     st.stop()
 
+# Updated Model Call for Chat
+def get_chandra_response(prompt, image=None):
+    model_id = "gemini-3.1-flash-lite-preview"
+    if image:
+        response = client.models.generate_content(model=model_id, contents=[prompt, image])
+    else:
+        response = client.models.generate_content(model=model_id, contents=prompt)
+    return response.text
+    
 # --- 5. SIDEBAR WORKSPACE ---
 with st.sidebar:
     st.markdown(f"# 🌙 {COMPANY_NAME}")
