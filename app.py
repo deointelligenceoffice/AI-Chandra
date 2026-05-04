@@ -56,21 +56,14 @@ if not st.user.is_logged_in:
     st.stop()
 
 # --- 4. AI ENGINE SETUP (2026 Standard) ---
-from google import genai
-
 api_key = st.secrets.get("GEMINI_API_KEY")
-client = genai.Client(api_key=api_key)
-
-if not api_key:
-    st.error("System Failure: API Key missing.")
+if api_key:
+    client = genai.Client(api_key=api_key)
+    # Using the 2026 stable model ID
+    MODEL_ID = "gemini-3.1-flash-lite-preview" 
+else:
+    st.error("API Key Missing")
     st.stop()
-
-# Change your model line to this:
-model = genai.GenerativeModel(
-    model_name="gemini-3.1-flash-lite-preview", 
-    system_instruction=CHANDRA_IDENTITY
-)
-
     
 # --- 5. SIDEBAR WORKSPACE ---
 with st.sidebar:
