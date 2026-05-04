@@ -1,7 +1,14 @@
 [client]
+# This line fixes the 'COLLAPSED' error from your logs
 toolbarMode = "minimal"
-showErrorDetails = false
 
 [theme]
-base = "dark"
-primaryColor = "#00f2fe"
+primaryColor = "#238636"
+backgroundColor = "#0e1117"
+secondaryBackgroundColor = "#161b22"
+textColor = "#ffffff"
+font = "sans serif"
+
+[server]
+headless = true
+enableCORS = false
