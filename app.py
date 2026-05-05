@@ -1,5 +1,5 @@
 import streamlit as st
-from google import genai  # <--- Use this, NOT google.generativeai
+from google import genai 
 from PIL import Image
 import os
 
@@ -17,7 +17,6 @@ VERSION = "v1.0.0-PRO"
 COMPANY_NAME = "Ai Chandra"
 FOUNDER = "RISHAV RAJ"
 
-# st.logo fixed for 2026 (removed unsupported 'icon_image' parameter)
 st.logo(LOGO_URL, link="https://deotechnologies.com")
 
 st.markdown(
@@ -49,17 +48,15 @@ if not st.user.is_logged_in:
         st.title(f"🌑 {COMPANY_NAME}")
         st.subheader("Lunar-Grade Intelligence. Secure Access.")
         st.info(f"System Version {VERSION} | Running Gemini 3.1")
-        # st.login fixed (removed 'icon' which is not a valid parameter)
         if st.button("Continue with Google"):
             st.login("google")
         st.markdown("---")
         st.caption(f"© 2026 {COMPANY_NAME} - Established by {FOUNDER}")
     st.stop()
 
-# --- 4. AI ENGINE SETUP (2026 GenAI SDK) ---
+# --- 4. AI ENGINE SETUP ---
 api_key = st.secrets.get("GEMINI_API_KEY")
 if api_key:
-    # Initialize the New Client
     client = genai.Client(api_key=api_key)
     MODEL_ID = "gemini-3.1-flash-lite-preview" 
 else:
@@ -71,14 +68,12 @@ with st.sidebar:
     st.markdown(f"# 🌙 {COMPANY_NAME}")
     st.caption(f"Status: Operational | {VERSION}")
     st.divider()
-
     st.markdown(f"👤 *Active User:* {st.user.name}")
 
     choice = st.radio(
         "MISSION CONTROL", 
         ["🔍 Universal Scout", "🎓 Exam Master", "🎤 Pitch Maker", "✉️ Outreach Closer", "📊 Competitor Watch", "🚀 Content Catalyst", "⚙️ System Info"]
     )
-
     st.divider()
     st.markdown("### DT")
     st.info("AI Chandra is a flagship product of *Deo Technologies*.")
@@ -101,7 +96,6 @@ if choice == "⚙️ System Info":
 else:
     st.header(f"🛰️ {choice}")
 
-    # TASK LOGIC
     module_context = f"[{choice} Mode] "
     if choice == "🎓 Exam Master":
         c1, c2 = st.columns(2)
@@ -115,8 +109,7 @@ else:
         with st.chat_message(message["role"]):
             st.markdown(message["content"])
 
-    # File Uploader
-    uploaded_file = st.file_uploader("Attach Intel (Images)", type=["jpg", "png", "jpeg"], label_visibility="collapsed")
+    uploaded_file = st.file_uploader("Attach Intel", type=["jpg", "png", "jpeg"], label_visibility="collapsed")
 
     if prompt := st.chat_input("Type your query..."):
         st.session_state.chat_history.append({"role": "user", "content": prompt})
@@ -125,29 +118,17 @@ else:
 
         with st.chat_message("assistant"):
             try:
+                # Combining everything into one clean generation block
                 if uploaded_file:
                     img = Image.open(uploaded_file)
-                    # New SDK syntax for multimodal
-                    response = client.models.generate_content(
-                        model=MODEL_ID,
-                        contents=[module_context + prompt, img]
-                    )
+                    input_content = [module_context + prompt, img]
                 else:
-                    # History processing for text chat using new SDK
-                    history_for_api = []
-                    for m in st.session_state.chat_history[:-1]:
-                        # Map roles correctly for the new SDK
-                        role = "user" if m["role"] == "user" else "model"
-                        history_for_api.append({"role": role, "parts": [{"text": m["content"]}]})
-                    
-            
-                    # For text and images:
-response = client.models.generate_content(
-    model=MODEL_ID,
-    contents=[prompt, img] if uploaded_file else prompt
-)
-st.write(response.text)
+                    input_content = module_context + prompt
 
+                response = client.models.generate_content(
+                    model=MODEL_ID,
+                    contents=input_content
+                )
 
                 full_response = response.text
                 st.markdown(full_response)
