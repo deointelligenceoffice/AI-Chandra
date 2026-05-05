@@ -1,9 +1,9 @@
 import streamlit as st
-import google.generativeai as genai
+from google import genai  # Correct 2026 Import
 import os
 from PIL import Image
 
-# --- 1. MANDATORY: PAGE CONFIG (MUST BE LINE 1) ---
+# --- 1. MANDATORY: PAGE CONFIG ---
 st.set_page_config(
     page_title="AI Chandra | Lunar Intelligence", 
     page_icon="🌙", 
@@ -17,8 +17,8 @@ VERSION = "v1.0.0-PRO"
 COMPANY_NAME = "Ai Chandra"
 FOUNDER = "RISHAV RAJ"
 
-# Professional logo/branding
-st.logo(LOGO_URL, link="https://deotechnologies.com", icon_image="🚀")
+# st.logo fixed for 2026 (removed unsupported 'icon_image' parameter)
+st.logo(LOGO_URL, link="https://deotechnologies.com")
 
 st.markdown(
     """
@@ -41,7 +41,7 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-# --- 3. AUTHENTICATION (Using 2026 st.user syntax) ---
+# --- 3. AUTHENTICATION ---
 if not st.user.is_logged_in:
     col1, col2, col3 = st.columns([1, 2, 1])
     with col2:
@@ -49,40 +49,40 @@ if not st.user.is_logged_in:
         st.title(f"🌑 {COMPANY_NAME}")
         st.subheader("Lunar-Grade Intelligence. Secure Access.")
         st.info(f"System Version {VERSION} | Running Gemini 3.1")
-        if st.button("Continue with Google", icon=":material/login:"):
+        # st.login fixed (removed 'icon' which is not a valid parameter)
+        if st.button("Continue with Google"):
             st.login("google")
         st.markdown("---")
         st.caption(f"© 2026 {COMPANY_NAME} - Established by {FOUNDER}")
     st.stop()
 
-# --- 4. AI ENGINE SETUP (2026 Standard) ---
+# --- 4. AI ENGINE SETUP (2026 GenAI SDK) ---
 api_key = st.secrets.get("GEMINI_API_KEY")
 if api_key:
+    # Initialize the New Client
     client = genai.Client(api_key=api_key)
-    # Using the 2026 stable model ID
     MODEL_ID = "gemini-3.1-flash-lite-preview" 
 else:
     st.error("API Key Missing")
     st.stop()
-    
+
 # --- 5. SIDEBAR WORKSPACE ---
 with st.sidebar:
     st.markdown(f"# 🌙 {COMPANY_NAME}")
     st.caption(f"Status: Operational | {VERSION}")
     st.divider()
-    
-    # Updated to st.user.name for 2026
+
     st.markdown(f"👤 *Active User:* {st.user.name}")
 
     choice = st.radio(
         "MISSION CONTROL", 
         ["🔍 Universal Scout", "🎓 Exam Master", "🎤 Pitch Maker", "✉️ Outreach Closer", "📊 Competitor Watch", "🚀 Content Catalyst", "⚙️ System Info"]
     )
-    
+
     st.divider()
     st.markdown("### DT")
     st.info("AI Chandra is a flagship product of *Deo Technologies*.")
-    
+
     if st.button("🗑️ Reset Neural Link"):
         st.session_state.chat_history = []
         st.rerun()
@@ -96,7 +96,7 @@ if "chat_history" not in st.session_state:
 if choice == "⚙️ System Info":
     st.header("⚙️ Technical Specifications")
     st.write(f"*Developer:* {FOUNDER}")
-    st.write("*Core Model:* Gemini 3.1 Flash-Lite")
+    st.write(f"*Core Model:* {MODEL_ID}")
     st.success("All systems green. Deployment successful.")
 else:
     st.header(f"🛰️ {choice}")
@@ -127,19 +127,28 @@ else:
             try:
                 if uploaded_file:
                     img = Image.open(uploaded_file)
-                    response = model.generate_content([module_context + prompt, img])
-                    st.markdown(response.text)
-                    st.session_state.chat_history.append({"role": "assistant", "content": response.text})
+                    # New SDK syntax for multimodal
+                    response = client.models.generate_content(
+                        model=MODEL_ID,
+                        contents=[module_context + prompt, img]
+                    )
                 else:
-                    # History processing for text chat
+                    # History processing for text chat using new SDK
                     history_for_api = []
                     for m in st.session_state.chat_history[:-1]:
+                        # Map roles correctly for the new SDK
                         role = "user" if m["role"] == "user" else "model"
-                        history_for_api.append({"role": role, "parts": [m["content"]]})
+                        history_for_api.append({"role": role, "parts": [{"text": m["content"]}]})
+                    
+                    # Using client.models.generate_content with context
+                    response = client.models.generate_content(
+                        model=MODEL_ID,
+                        contents=history_for_api + [{"role": "user", "parts": [{"text": module_context + prompt}]}]
+                    )
 
-                    chat_session = model.start_chat(history=history_for_api)
-                    response = chat_session.send_message(module_context + prompt)
-                    st.markdown(response.text)
-                    st.session_state.chat_history.append({"role": "assistant", "content": response.text})
+                full_response = response.text
+                st.markdown(full_response)
+                st.session_state.chat_history.append({"role": "assistant", "content": full_response})
+                
             except Exception as e:
                 st.error(f"Neural Link Error: {e}")
