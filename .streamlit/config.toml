@@ -12,3 +12,4 @@ font = "sans serif"
 [server]
 headless = true
 enableCORS = false
+enableXsrfProtection = false  # Add this to ensure the Google Login works perfectly
