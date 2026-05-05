@@ -1,7 +1,7 @@
 import streamlit as st
-from google import genai  # Correct 2026 Import
-import os
+from google import genai  # <--- Use this, NOT google.generativeai
 from PIL import Image
+import os
 
 # --- 1. MANDATORY: PAGE CONFIG ---
 st.set_page_config(
@@ -140,11 +140,14 @@ else:
                         role = "user" if m["role"] == "user" else "model"
                         history_for_api.append({"role": role, "parts": [{"text": m["content"]}]})
                     
-                    # Using client.models.generate_content with context
-                    response = client.models.generate_content(
-                        model=MODEL_ID,
-                        contents=history_for_api + [{"role": "user", "parts": [{"text": module_context + prompt}]}]
-                    )
+            
+                    # For text and images:
+response = client.models.generate_content(
+    model=MODEL_ID,
+    contents=[prompt, img] if uploaded_file else prompt
+)
+st.write(response.text)
+
 
                 full_response = response.text
                 st.markdown(full_response)
